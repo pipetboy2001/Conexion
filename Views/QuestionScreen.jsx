@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import Footer from './../Components/Footer'; // Importa el componente Footer
 
 const QuestionScreen = ({ route, navigation }) => {
   const { category } = route.params;
@@ -50,6 +51,7 @@ const QuestionScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
+      <Footer />
     </ImageBackground>
   );
 };

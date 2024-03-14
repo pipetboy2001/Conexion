@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ImageBackground, Animated } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import Footer from './../Components/Footer'; // Importa el componente Footer
 
 const HomeScreen = ({ navigation }) => {
   // Animación para los botones
@@ -56,6 +57,7 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </Animated.View>
       </View>
+      <Footer />
     </ImageBackground>
   );
 };
