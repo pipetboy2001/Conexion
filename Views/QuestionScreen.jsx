@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground, Animated } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import Footer from './../Components/Footer'; // Importa el componente Footer
 
@@ -8,6 +8,7 @@ const QuestionScreen = ({ route, navigation }) => {
 
   const [questions, setQuestions] = useState([]);
   const [categoryImage, setCategoryImage] = useState(null);
+  const [flipAnimation] = useState(new Animated.Value(0));
 
   useEffect(() => {
     let questionsJson;
@@ -31,7 +32,20 @@ const QuestionScreen = ({ route, navigation }) => {
   }, [currentQuestionIndex, questions]);
 
   const handleNextQuestion = () => {
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
+    Animated.sequence([
+      Animated.timing(flipAnimation, {
+        toValue: 1, // Rota la tarjeta 90 grados
+        duration: 250, // Duración de la primera mitad de la animación
+        useNativeDriver: true,
+      }),
+      Animated.timing(flipAnimation, {
+        toValue: 0, // Rota la tarjeta de regreso a 0 grados
+        duration: 250, // Duración de la segunda mitad de la animación
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    });
   };
 
   return (
@@ -40,8 +54,8 @@ const QuestionScreen = ({ route, navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <AntDesign name="arrowleft" size={24} color="#FFFFFF" />
         </TouchableOpacity>
-        <View style={styles.questionContainer}>
-        {categoryImage && <Image source={categoryImage} style={[styles.categoryImage, { resizeMode: 'contain' }]} />}
+        <Animated.View style={[styles.questionContainer, { transform: [{ rotateY: flipAnimation.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] }) }] }]}>
+          {categoryImage && <Image source={categoryImage} style={[styles.categoryImage, { resizeMode: 'contain' }]} />}
           <Text style={styles.title}>{category}</Text>
           <View style={styles.singleQuestionContainer}>
             <Text style={styles.question}>{questions[currentQuestionIndex]}</Text>
@@ -49,7 +63,7 @@ const QuestionScreen = ({ route, navigation }) => {
           <TouchableOpacity onPress={handleNextQuestion} style={styles.nextButton}>
             <Text style={styles.nextButtonText}>Siguiente</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </View>
       <Footer />
     </ImageBackground>
@@ -80,6 +94,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     margin: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    backfaceVisibility: 'hidden', // Oculta la parte trasera de la tarjeta
   },
   categoryImage: {
     width: 30,
