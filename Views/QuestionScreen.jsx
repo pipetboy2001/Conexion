@@ -15,26 +15,30 @@ const QuestionScreen = ({ route, navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Muestra el indicador de carga mientras se espera la obtención de datos
+        setQuestions(['Cargando...']);
+        setCategoryImage(null);
+  
         const querySnapshot = await db.collection('Preguntas').doc(category).get();
         if (querySnapshot.exists) {
           const questionsData = querySnapshot.data();
           setCategoryImage(category === 'Vinculum' ? require('./../assets/love-icon.png') : require('./../assets/sex-icon.png'));
-
           setQuestions(questionsData.questions || []);
         } else {
           console.log("No se encontraron datos para la categoría:", category);
-          setQuestions(["No se encontraron preguntas para esta categoría."]);
+          // Establecer el valor de questions como un array vacío si no se encontraron datos
+          setQuestions(['No se encontraron datos para la categoría seleccionada']);
         }
       } catch (error) {
         console.error("Error al obtener datos:", error);
-        setQuestions(["Error al obtener las preguntas. Inténtalo de nuevo más tarde."]);
+        // Establecer el valor de questions como un array vacío en caso de error
+        setQuestions(['Error al obtener datos']);
       }
     };
-
+    // Llama a fetchData al principio y cada vez que category cambie
     fetchData();
   }, [category]);
-
-
+  
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   useEffect(() => {
