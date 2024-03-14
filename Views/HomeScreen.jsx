@@ -51,7 +51,7 @@ const HomeScreen = ({ navigation }) => {
               ]}
               onPress={() => navigation.navigate('Question', { category: 'Hormonal' })}
             >
-              <Text style={styles.buttonText}> <FontAwesome5 name="heart" size={15} color="white" style={styles.icon} /> Preguntas sobre sexualidad y deseos</Text>
+              <Text style={styles.buttonText}> <FontAwesome5 name="fire" size={15} color="white" style={styles.icon} /> Preguntas sobre sexualidad y deseos</Text>
               <Text style={styles.buttonDescription}>Preguntas más sexuales y candentes</Text>
             </Pressable>
           </View>
