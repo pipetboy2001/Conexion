@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground, Animated } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import Footer from './../Components/Footer'; // Importa el componente Footer
+import { db } from './../Database/Firebase'; // Importa el objeto db que representa tu base de datos Firestore
+
 
 const QuestionScreen = ({ route, navigation }) => {
   const { category } = route.params;
@@ -11,16 +13,27 @@ const QuestionScreen = ({ route, navigation }) => {
   const [flipAnimation] = useState(new Animated.Value(0));
 
   useEffect(() => {
-    let questionsJson;
-    if (category === 'Vinculum') {
-      questionsJson = require('./../Json/questions_vinculum.json');
-      setCategoryImage(require('./../assets/love-icon.png'));
-    } else if (category === 'Hormonal') {
-      questionsJson = require('./../Json/questions_hormonal.json');
-      setCategoryImage(require('./../assets/sex-icon.png'));
-    }
-    setQuestions(questionsJson.questions);
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await db.collection('Preguntas').doc(category).get();
+        if (querySnapshot.exists) {
+          const questionsData = querySnapshot.data();
+          setCategoryImage(category === 'Vinculum' ? require('./../assets/love-icon.png') : require('./../assets/sex-icon.png'));
+
+          setQuestions(questionsData.questions || []);
+        } else {
+          console.log("No se encontraron datos para la categoría:", category);
+          setQuestions(["No se encontraron preguntas para esta categoría."]);
+        }
+      } catch (error) {
+        console.error("Error al obtener datos:", error);
+        setQuestions(["Error al obtener las preguntas. Inténtalo de nuevo más tarde."]);
+      }
+    };
+
+    fetchData();
   }, [category]);
+
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
